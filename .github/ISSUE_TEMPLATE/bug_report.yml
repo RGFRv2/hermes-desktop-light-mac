@@ -1,0 +1,30 @@
+name: Bug report (English)
+description: Report a macOS installer or build automation problem.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For security vulnerabilities, use the private reporting instructions in SECURITY.md.
+        Remove credentials, personal paths, Gateway addresses and unrelated content from logs or screenshots.
+        Application or Gateway bugs that reproduce outside this packaging belong upstream.
+  - type: input
+    id: release
+    attributes:
+      label: Distribution tag
+      placeholder: v0.23.0-macos.2
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and Apple Silicon chip
+      description: Do not include a device serial number or account name.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and reproduction
+      description: Include steps, expected behavior, actual behavior and any redacted error message.
+    validations:
+      required: true
