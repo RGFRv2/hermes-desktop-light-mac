@@ -28,8 +28,9 @@ def build(manifest, source):
         contract = (source / 'scripts/bundles/desktop_prepare.py').read_text()
         if 'stable preparation requires its exact claim tag' in contract:
             raise ValueError('Upstream release is missing the annotated build claim required by its builder')
+    # Archives are created once, after notices and complete ad-hoc signing.
     subprocess.run([sys.executable, 'scripts/bundles/desktop.py', '--tag=' + manifest['tag'],
-                    '--variant=light', '--clean'],
+                    '--variant=light', '--clean', '--', '--dir'],
                    cwd=source, env=env, check=True)
 
 

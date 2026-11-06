@@ -92,7 +92,7 @@ jobs:
           df -h .
       - name: Fetch and verify the unmodified official sources
         run: python scripts/prepare_source.py --manifest release-request.json --source upstream
-      - name: Compile Light DMG and ZIP
+      - name: Compile Light application
         run: python scripts/build_macos.py --manifest release-request.json --source upstream 2>&1 | tee build.log
       - name: Validate and collect installers
         run: python scripts/package_macos.py --manifest release-request.json --source upstream --output dist

@@ -13,6 +13,7 @@ from publish import verify_downloads
 from resolve import resolve
 from repack_macos import verify_signature
 from sign_macos import signing_plan
+from build_macos import build
 
 
 def manifest():
@@ -27,6 +28,20 @@ def stamp():
 
 
 class AutomationTests(unittest.TestCase):
+    def test_native_build_defers_archives_and_excludes_credentials(self):
+        with tempfile.TemporaryDirectory() as root, \
+                patch('build_macos.sys.platform', 'darwin'), \
+                patch('build_macos.platform.machine', return_value='arm64'), \
+                patch('build_macos.run', return_value=manifest()['sha']), \
+                patch('build_macos.subprocess.run') as invoke, \
+                patch.dict('os.environ', {'GH_TOKEN': 'fixture-only', 'APPLE_API_KEY': 'fixture-only'}):
+            build(manifest(), root)
+            command = invoke.call_args.args[0]
+            self.assertEqual(command[-2:], ['--', '--dir'])
+            self.assertNotIn('GH_TOKEN', invoke.call_args.kwargs['env'])
+            self.assertNotIn('APPLE_API_KEY', invoke.call_args.kwargs['env'])
+            self.assertEqual(invoke.call_args.kwargs['env']['CSC_IDENTITY_AUTO_DISCOVERY'], 'false')
+
     def fake_api(self, published=False, complete=True, prerelease=False, wrong_commit=False):
         self.calls = []
 
