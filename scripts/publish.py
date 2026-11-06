@@ -88,19 +88,22 @@ def publish(directory):
     command = ['gh', 'release']
     common = ['--repo', repository]
     if not existing:
-        subprocess.run([*command, 'create', tag, *common, '--target', os.environ['GITHUB_SHA'],
-                        '--draft', '--title', f'Hermes Light {tag} — Mac ARM64',
-                        '--notes-file', str(directory / 'RELEASE_NOTES.md')], check=True)
-    # Read back the exact draft before any retry can replace partial uploads.
-    current = find_release(repository, tag)
-    release_id = verify_draft(current, tag, existing['id'] if existing else None)
+        existing = api(f'/repos/{repository}/releases', method='POST', payload={
+            'tag_name': tag, 'target_commitish': os.environ['GITHUB_SHA'], 'draft': True,
+            'name': f'Hermes Light {tag} — Mac ARM64',
+            'body': (directory / 'RELEASE_NOTES.md').read_text()})
+    # The creation response is authoritative even before tag/list indexing catches up.
+    release_id = verify_draft(existing, tag)
+    release_path = f'/repos/{repository}/releases/{release_id}'
+    current = api(release_path)
+    verify_draft(current, tag, release_id)
     subprocess.run([*command, 'upload', tag, *common, '--clobber', *files], check=True)
-    current = find_release(repository, tag)
+    current = api(release_path)
     verify_draft(current, tag, release_id)
     verify_uploaded_assets(current, directory)
     latest = api(f'/repos/{repository}/releases/latest', missing_ok=True)
     promote = latest is None or distribution_version(tag) >= distribution_version(latest['tag_name'])
-    current = find_release(repository, tag)
+    current = api(release_path)
     verify_draft(current, tag, release_id)
     verify_uploaded_assets(current, directory)
     subprocess.run([*command, 'edit', tag, *common, '--draft=false',

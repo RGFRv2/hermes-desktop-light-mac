@@ -56,9 +56,50 @@ class HardeningTests(unittest.TestCase):
             with patch.dict('os.environ', {'GITHUB_REF': 'refs/heads/main',
                      'GITHUB_EVENT_NAME': 'workflow_dispatch', 'GITHUB_REPOSITORY': 'example/builds'}), \
                  patch.object(publish, 'find_release', return_value=draft), \
+                 patch.object(publish, 'api', return_value=draft), \
                  patch.object(publish.subprocess, 'run') as invoke, self.assertRaises(ValueError):
                 publish.publish(directory)
             self.assertFalse(any('--draft=false' in c.args[0] for c in invoke.call_args_list))
+
+    def test_created_draft_is_tracked_by_id_without_tag_index_visibility(self):
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root)
+            test_automation.AutomationTests().make_release(directory)
+            draft = {'id': 42, 'draft': True, 'tag_name': 'v0.23.0-macos.3',
+                     'assets': [{'name': p.name, 'size': p.stat().st_size, 'state': 'uploaded',
+                                 'digest': 'sha256:' + digest(p)} for p in directory.iterdir()]}
+            calls = []
+            def api(path, missing_ok=False, method='GET', payload=None):
+                calls.append((path, method, payload))
+                if path.endswith('/releases/latest'):
+                    return None
+                if method == 'POST':
+                    self.assertEqual(payload['tag_name'], draft['tag_name'])
+                    self.assertIs(payload['draft'], True)
+                    return draft
+                self.assertTrue(path.endswith('/releases/42'))
+                return draft
+            with patch.dict('os.environ', {'GITHUB_REF': 'refs/heads/main',
+                     'GITHUB_EVENT_NAME': 'workflow_dispatch', 'GITHUB_REPOSITORY': 'example/builds',
+                     'GITHUB_SHA': 'a' * 40}), \
+                 patch.object(publish, 'find_release', return_value=None) as lookup, \
+                 patch.object(publish, 'api', side_effect=api), \
+                 patch.object(publish.subprocess, 'run') as invoke, patch.object(publish, 'summary'):
+                publish.publish(directory)
+            self.assertEqual(lookup.call_count, 1)
+            self.assertTrue(any('--draft=false' in c.args[0] for c in invoke.call_args_list))
+
+    def test_created_draft_identity_is_validated_before_upload(self):
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root)
+            test_automation.AutomationTests().make_release(directory)
+            with patch.dict('os.environ', {'GITHUB_REF': 'refs/heads/main',
+                     'GITHUB_EVENT_NAME': 'push', 'GITHUB_REPOSITORY': 'example/builds', 'GITHUB_SHA': 'a' * 40}), \
+                 patch.object(publish, 'find_release', return_value=None), \
+                 patch.object(publish, 'api', return_value={'id': 42, 'draft': False}), \
+                 patch.object(publish.subprocess, 'run') as invoke, self.assertRaises(ValueError):
+                publish.publish(directory)
+            invoke.assert_not_called()
 
     def test_changed_application_or_profile_identity_is_rejected(self):
         plist = {'CFBundleIdentifier': BUNDLE_ID, 'CFBundleExecutable': 'Hermes Light'}
