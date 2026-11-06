@@ -46,10 +46,10 @@ N’autoriser qu’un build auquel vous faites confiance. Ce projet ne demande p
 ## Fonctionnement des builds
 
 - Vérification de la dernière release stable officielle chaque jour à **10 h et 23 h, heure de Paris (Europe/Paris)**, avec prise en compte des changements d’heure. GitHub peut retarder les tâches planifiées.
-- **Run workflow** accepte un tag upstream facultatif, par exemple `v0.23.0`.
+- **Run workflow** sur **main** accepte un tag upstream facultatif, par exemple `v0.23.0`.
 - Pas de compilation native si une release complète de la révision de packaging courante existe déjà.
 - Vérification du tag, du commit et, lorsque nécessaire, de la référence officielle de tentative de build, puis compilation de `light` depuis les sources inchangées.
-- Ajout des notices avant signature du code et des bundles de l’intérieur vers l’extérieur. DMG et ZIP sont créés depuis l’application signée.
+- Vérification de la couverture des notices des dépendances de production et de l’identité stable de l’application. Ajout des notices avant signature du code et des bundles de l’intérieur vers l’extérieur. DMG et ZIP sont créés depuis l’application signée.
 - Publication conditionnée à l’intégrité, l’architecture ARM64, la provenance, les métadonnées Light, les signatures dans les deux archives, les notices requises et un démarrage natif avec profil isolé.
 - Les PR exécutent les tests d’automatisation sans publier ; la validation native est lancée si les scripts, tests ou workflows changent. Une publication interrompue laisse un brouillon relançable.
 

@@ -10,8 +10,12 @@ The root MIT license applies to this repository's automation and documentation. 
 
 ## Electron, Chromium and npm dependencies
 
-New packages retain Electron's license and Chromium's third-party notices from the locked Electron archive. They include available license and notice texts and a metadata inventory of the installed npm dependency tree, including build dependencies. This broad inventory does not mean every listed package is bundled at runtime, or that automated collection resolves every possible license obligation.
+Packages retain Electron's license and Chromium's third-party notices from the locked archive. The inventory covers the installed production and peer dependency closure of the desktop workspace, including nested packages and workspace links confined to the source tree. This is a conservative list of potentially bundled components, not a runtime-only SBOM. Each listed package must have nonempty associated notices or an explicit version-bound supplement, plus a declared license; otherwise the build stops for review. First-party workspaces use the upstream repository license. Build-only dependencies are excluded. Automated collection does not resolve every possible obligation for artwork, fonts or other assets.
 
 Generated notices live in `Hermes Light.app/Contents/Resources/licenses/`. Required notices are checked before signing and publication. Additional terms for fonts, artwork, native libraries and other upstream assets continue to apply.
 
 Hermes and Nous Research names identify the upstream software. No affiliation, endorsement or ownership of those names is claimed.
+
+## Version-bound notice supplements
+
+Some published packages omit a standalone license. `notices/reviewed-packages.json` binds supplemental evidence to the exact package version, lockfile integrity and notice SHA-256. Source-license text is retained where found. Twelve current exceptions retain only the publisher's license declaration and available README; these do **not** establish complete license compliance. Their names are recorded in the app's npm inventory and `validation.json`. A new package version without notice coverage fails until reviewed. No blanket exception applies to future releases.

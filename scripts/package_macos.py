@@ -12,6 +12,7 @@ from sign_macos import sign_app
 from repack_macos import archive_app, smoke_launch, verify_archive_signatures, verify_signature
 from license_notices import stage_notices
 from release_notes import render_notes
+from app_identity import verify_identity
 
 
 def validate_stamp(stamp, manifest):
@@ -47,6 +48,11 @@ def package(manifest, source, output):
         raise ValueError('Light app includes an agent payload')
     with (app / 'Contents/Info.plist').open('rb') as stream:
         plist = plistlib.load(stream)
+    identity = verify_identity(app, plist)
+    profile_env = {key: value for key, value in os.environ.items() if not key.startswith('HERMES_')}
+    profile_env.update(HERMES_DESKTOP_VARIANT='light', HERMES_PAYLOAD_TAG=manifest['tag'])
+    subprocess.run(['node', str(Path(__file__).with_name('check_profile.mjs')), str(Path(source).resolve())],
+                   env=profile_env, check=True)
     executable = plist['CFBundleExecutable']
     if Path(executable).name != executable:
         raise ValueError('Invalid bundle executable name')
@@ -57,6 +63,7 @@ def package(manifest, source, output):
         raise ValueError('Application version differs from the release tag')
     policy = Path(source).resolve() / 'apps/desktop/electron'
     stage_notices(source, resources)
+    license_inventory = read_json(resources / 'licenses/npm-inventory.json')
     sign_app(app, policy / 'entitlements.mac.plist', policy / 'entitlements.mac.inherit.plist')
     smoke_launch(app)
     dmg_path, zip_path = archive_app(app, release, manifest['tag'][1:])
@@ -84,6 +91,8 @@ def package(manifest, source, output):
         'signature_type': 'ad-hoc', 'archives_signature_verified': True,
         'native_process_smoke_test': True,
         'license_notices_included': True,
+        'license_review_publisher_declarations': license_inventory['publisher_declaration_only'],
+        'stable_application_identity': identity,
         'developer_id': False, 'notarized': False,
         'interactive_install_and_launch_test': 'not performed by CI',
     })

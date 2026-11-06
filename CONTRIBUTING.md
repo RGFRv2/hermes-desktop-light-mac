@@ -4,10 +4,12 @@ English · [Français](CONTRIBUTING.fr.md)
 
 This repository maintains unofficial macOS Light build automation. Report application or Gateway bugs to [upstream Hermes](https://github.com/NousResearch/hermes-agent) if they reproduce independently of this packaging.
 
+Use Python 3.12 to match CI; Python 3.12 or newer is required. Apple’s system Python may be older.
+
 1. Open or reference an issue describing the problem and expected behavior.
 2. Use a dedicated branch and open a PR linked to the issue.
 3. Update both README languages when user-facing behavior changes.
-4. Run `python3 -m unittest discover -s tests -v`.
+4. Run `python3.12 -m unittest discover -s tests -v`.
 5. Wait for relevant CI checks before merging. Packaging changes require native macOS validation.
 
 English is the default documentation language. French reports and contributions are welcome.
@@ -19,3 +21,9 @@ Do not include API keys, certificates, Gateway credentials, private addresses or
 ## Schedule maintenance
 
 In public repositories, GitHub may disable scheduled workflows after 60 days without repository activity. If automatic release checks stop, verify that the workflow is still enabled. [GitHub schedule documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
+
+## Release administration
+
+Publish only from `main`, including manual runs. Uploaded assets must have matching GitHub SHA-256 digests before publication. Enable release immutability in repository settings and keep the draft/upload/publish sequence. Use a new packaging revision when installer bytes change.
+
+When opening the repository to the public, verify that the saved main protection is enforced, enable private vulnerability reporting, verify secret scanning and push protection, and review approval requirements for workflows from external contributors. These settings depend on repository visibility and account capabilities; a policy file does not enable them.

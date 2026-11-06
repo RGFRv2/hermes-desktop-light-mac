@@ -17,6 +17,7 @@ on:
     paths:
       - '.github/workflows/macos.yml'
       - 'scripts/**'
+      - 'notices/**'
       - 'tests/**'
 
 permissions:
@@ -122,7 +123,7 @@ jobs:
   publish:
     name: Publish downloadable installers
     needs: [resolve, build]
-    if: github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && contains(fromJSON('["push", "schedule", "workflow_dispatch"]'), github.event_name)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:

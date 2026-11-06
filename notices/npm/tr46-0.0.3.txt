@@ -1,0 +1,5 @@
+Package: tr46@0.0.3
+Published license declaration: MIT
+Locked archive: https://registry.npmjs.org/tr46/-/tr46-0.0.3.tgz
+Locked integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
+Published author metadata: {"name": "Sebastian Mayr", "email": "npm@smayr.name"}

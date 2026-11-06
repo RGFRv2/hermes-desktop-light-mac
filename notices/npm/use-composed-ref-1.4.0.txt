@@ -1,0 +1,11 @@
+Package: use-composed-ref@1.4.0
+Published license declaration: MIT
+Locked archive: https://registry.npmjs.org/use-composed-ref/-/use-composed-ref-1.4.0.tgz
+Locked integrity: sha512-djviaxuOOh7wkj0paeO1Q/4wMZ8Zrnag5H6yBvzN7AKKe8beOaED9SF5/ByLqsku8NP4zQqsvM2u3ew/tJK8/w==
+
+Published archive file: package/README.md
+
+# use-composed-ref
+
+React hook which creates a ref function from given refs. Useful when using forwardRef.
+

@@ -1,0 +1,19 @@
+Package: lazy-val@1.0.5
+Published license declaration: MIT
+Locked archive: https://registry.npmjs.org/lazy-val/-/lazy-val-1.0.5.tgz
+Locked integrity: sha512-0/BnGCCfyUMkBpeDgWihanIAF9JmZhHBgUhEqzvf+adhNGLoP6TaiI5oF8oyb3I45P+PcnrqihSf01M0l0G5+Q==
+Published author metadata: {"name": "Vladimir Krivosheev"}
+
+Published archive file: package/readme.md
+
+## lazy-val 
+
+Lazy value.
+
+```typescript
+class Lazy<T> {
+    constructor(creator: () => Promise<T>)
+    readonly hasValue: boolean
+    value: Promise<T>
+}
+```

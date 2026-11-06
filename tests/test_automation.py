@@ -19,7 +19,7 @@ from ci_scope import requires_native
 
 def manifest():
     return {'tag': 'v0.23.0', 'sha': 'a' * 40, 'tag_object': 'b' * 40,
-            'release_tag': 'v0.23.0-macos.2', 'packaging_revision': 2,
+            'release_tag': 'v0.23.0-macos.3', 'packaging_revision': 3,
             'upstream_repository': UPSTREAM,
             'claim': {'tag': 'rc.2-v0.23.0', 'object': 'c' * 40}}
 
@@ -34,7 +34,7 @@ class AutomationTests(unittest.TestCase):
             self.assertFalse(requires_native('a' * 40, 'b' * 40))
 
     def test_build_inputs_require_native_validation_including_unusual_filenames(self):
-        for filename in ('scripts/license_notices.py', 'tests/test_automation.py',
+        for filename in ('scripts/license_notices.py', 'tests/test_automation.py', 'notices/reviewed-packages.json',
                          '.github/workflows/macos.yml', 'scripts/name\nwith-newline.py'):
             with self.subTest(filename=filename), patch('ci_scope.run', return_value=filename + '\0'):
                 self.assertTrue(requires_native('a' * 40, 'b' * 40))
@@ -127,12 +127,12 @@ class AutomationTests(unittest.TestCase):
 
     def test_pull_request_rebuilds_already_published_version_for_validation(self):
         value, _ = resolve('', 'example/builds', self.fake_api(published=True), validation_only=True)
-        self.assertEqual(value['release_tag'], 'v0.23.0-macos.2')
+        self.assertEqual(value['release_tag'], 'v0.23.0-macos.3')
 
     def test_packaging_repair_has_its_own_tag_and_version_order(self):
-        self.assertEqual(distribution_tag('v0.23.0'), 'v0.23.0-macos.2')
-        self.assertGreater(distribution_version('v0.23.0-macos.2'), distribution_version('v0.23.0'))
-        self.assertGreater(distribution_version('v0.23.1-macos.1'), distribution_version('v0.23.0-macos.2'))
+        self.assertEqual(distribution_tag('v0.23.0'), 'v0.23.0-macos.3')
+        self.assertGreater(distribution_version('v0.23.0-macos.3'), distribution_version('v0.23.0'))
+        self.assertGreater(distribution_version('v0.23.1-macos.1'), distribution_version('v0.23.0-macos.3'))
 
     def test_incomplete_published_release_is_not_silently_skipped(self):
         with self.assertRaisesRegex(ValueError, 'incomplete'):
@@ -180,7 +180,9 @@ class AutomationTests(unittest.TestCase):
             'architecture': 'arm64', 'version': '0.23.0',
             'codesign_exit_code': 0, 'signature_type': 'ad-hoc',
             'archives_signature_verified': True, 'native_process_smoke_test': True, 'license_notices_included': True,
-            'light_stamp_and_no_agent_payload': True, 'dmg_integrity': True, 'zip_integrity': True})
+            'light_stamp_and_no_agent_payload': True, 'dmg_integrity': True, 'zip_integrity': True,
+            'stable_application_identity': {'bundle_id': 'com.nousresearch.hermes-light',
+                'package_name': 'HermesLight', 'profile_name': 'Hermes'}})
         for name in ('HermesLight-0.23.0-mac-arm64.dmg', 'HermesLight-0.23.0-mac-arm64.zip', 'RELEASE_NOTES.md', 'RELEASE_NOTES.fr.md'):
             (directory / name).write_text('fixture')
         self.rehash(directory)

@@ -26,6 +26,10 @@ class PublicDistributionTests(unittest.TestCase):
             if chromium:
                 archive.writestr('LICENSES.chromium.html', '<html>Chromium fixture notices</html>')
         (prepared / 'prepared.json').write_text(json.dumps({'electron': str(electron)}))
+        desktop = source / 'apps/desktop'
+        desktop.mkdir(parents=True)
+        (desktop / 'package.json').write_text(json.dumps({'name': 'hermes', 'version': '1.0.0',
+            'dependencies': {'@example/library': '1.0.0'}}))
         package = source / 'node_modules/@example/library'
         package.mkdir(parents=True)
         (package / 'package.json').write_text(json.dumps(
@@ -45,9 +49,9 @@ class PublicDistributionTests(unittest.TestCase):
             self.assertEqual((licenses / 'HERMES-LICENSE.txt').read_bytes(), (source / 'LICENSE').read_bytes())
             self.assertEqual((licenses / 'electron/LICENSE.txt').read_text(), 'Electron fixture license\n')
             inventory = json.loads((licenses / 'npm-inventory.json').read_text())
-            self.assertEqual(len(inventory['packages']), 1)
-            self.assertEqual(inventory['packages'][0]['name'], '@example/library')
-            self.assertEqual(inventory['notice_files'], ['@example/library/LICENSE-MIT'])
+            self.assertEqual(len(inventory['packages']), 2)
+            self.assertIn('@example/library', [p['name'] for p in inventory['packages']])
+            self.assertIn('node_modules/@example/library/LICENSE-MIT', inventory['notice_files'])
             self.assertNotIn(str(source), json.dumps(inventory))
             verify_notices(resources)
 
@@ -71,7 +75,7 @@ class PublicDistributionTests(unittest.TestCase):
             stage_notices(source, resources)
             inventory = resources / 'licenses/npm-inventory.json'
             data = json.loads(inventory.read_text())
-            data['notice_files'] = ['../HERMES-LICENSE.txt']
+            data['notice_files'].append('../HERMES-LICENSE.txt')
             inventory.write_text(json.dumps(data))
             with self.assertRaisesRegex(ValueError, 'Invalid npm notice path'):
                 verify_notices(resources)
@@ -88,7 +92,7 @@ class PublicDistributionTests(unittest.TestCase):
 
     def test_english_release_has_french_link_and_shared_provenance(self):
         value = {**test_automation.manifest(), 'upstream_release_url': 'https://github.com/NousResearch/hermes-agent/releases/tag/v0.23.0'}
-        french_url = 'https://github.com/example/builds/releases/download/v0.23.0-macos.2/RELEASE_NOTES.fr.md'
+        french_url = 'https://github.com/example/builds/releases/download/v0.23.0-macos.3/RELEASE_NOTES.fr.md'
         english, french = render_notes(value, 'Hermes Light.app', 'https://github.com/example/builds/actions/runs/123', french_url)
         self.assertIn(f'[Français]({french_url})', english)
         self.assertIn('Download the DMG', english)
