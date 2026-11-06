@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+upstream/
+dist/
+release-request.json
+build.log
+.DS_Store
+.env
+.env.*
+!.env.example
+*.p12
+*.p8
+*.pem
+*.key

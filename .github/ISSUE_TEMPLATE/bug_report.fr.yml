@@ -1,0 +1,30 @@
+name: Signaler un problème (Français)
+description: Signaler un problème d’installateur macOS ou d’automatisation.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Pour une vulnérabilité, suivre les consignes de signalement privé de SECURITY.fr.md.
+        Masquer identifiants, chemins personnels, adresses Gateway et contenu sans rapport dans les journaux et captures.
+        Les bugs de l’application ou de la Gateway indépendants de ce packaging sont à signaler upstream.
+  - type: input
+    id: release
+    attributes:
+      label: Tag de distribution
+      placeholder: v0.23.0-macos.2
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: Version de macOS et puce Apple Silicon
+      description: Ne pas indiquer de numéro de série ni de nom de compte.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problème et reproduction
+      description: Indiquer étapes, résultat attendu, résultat obtenu et éventuel message d’erreur anonymisé.
+    validations:
+      required: true
