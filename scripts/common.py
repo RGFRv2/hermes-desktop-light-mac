@@ -43,12 +43,16 @@ def distribution_version(tag):
     return (*stable_version(match[1]), int(match[2] or 0))
 
 
-def api(path, missing_ok=False):
+def api(path, missing_ok=False, method='GET', payload=None):
     headers = {'Accept': 'application/vnd.github+json', 'User-Agent': 'hermes-light-mac-builds',
                'X-GitHub-Api-Version': '2022-11-28'}
     if os.environ.get('GH_TOKEN'):
         headers['Authorization'] = 'Bearer ' + os.environ['GH_TOKEN']
-    request = Request(API + path, headers=headers)
+    data = None
+    if payload is not None:
+        data = json.dumps(payload).encode('utf-8')
+        headers['Content-Type'] = 'application/json'
+    request = Request(API + path, headers=headers, method=method, data=data)
     try:
         with urlopen(request, timeout=60) as response:
             return json.load(response)
