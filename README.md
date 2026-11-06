@@ -51,11 +51,9 @@ Only approve a build you trust. This project does not require disabling Gatekeep
 - The workflow verifies the exact upstream tag, commit and build-claim object where required, then builds the `light` variant from an unmodified checkout.
 - Required notices are staged before nested code and bundles are signed inside-out. DMG and ZIP are created from the signed app.
 - Publication requires integrity, ARM64 architecture, provenance, Light metadata, valid signatures inside both archives, required notices and native process startup with an isolated profile.
-- PRs validate without publishing. Interrupted publication leaves a retryable draft.
+- PRs run automation tests without publishing; native validation runs when scripts, tests or workflows change. Interrupted publication leaves a retryable draft.
 
 Tags such as **`vX.Y.Z-macos.N`** identify the Hermes version **X.Y.Z** and the Mac packaging revision **N**.
-
-In a public repository, GitHub may disable scheduled workflows after 60 days without repository activity. Check the workflow if daily checks stop. [GitHub schedule documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
 
 GitHub Actions dependencies use Node 24 and are pinned by SHA. The build's Node version is controlled separately by the upstream Hermes toolchain. Python and other compilation tools are build dependencies, not a runtime bundled into Light.
 

@@ -15,3 +15,7 @@ English is the default documentation language. French reports and contributions 
 Keep upstream source revisions intact and record artifact processing separately. Increment `PACKAGING_REVISION` if an installer changes; never overwrite published binaries. Documentation-only changes do not require rebuilding an existing installer.
 
 Do not include API keys, certificates, Gateway credentials, private addresses or unredacted personal logs. See [SECURITY.md](SECURITY.md) and [AGENTS.md](AGENTS.md).
+
+## Schedule maintenance
+
+In public repositories, GitHub may disable scheduled workflows after 60 days without repository activity. If automatic release checks stop, verify that the workflow is still enabled. [GitHub schedule documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
