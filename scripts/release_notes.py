@@ -23,10 +23,6 @@ approval in System Settings → Privacy & Security. Quit the application before 
 Updates are installed manually; no automatic application update feed is configured here.
 The ZIP is an alternative archive of the same application. Check downloads against `SHA256SUMS`.
 
-Required CI checks cover architecture, version, upstream identity, Light metadata, notices,
-archive integrity, signatures in both extracted installers and isolated native process startup.
-Interactive use on the destination Mac remains a user validation step.
-These builds do not update the remote Gateway or its data. This is not an official Nous Research distribution.
 '''
     french = f'''# Hermes Desktop Light {tag} — Mac Apple Silicon (packaging {revision})
 
@@ -45,9 +41,5 @@ autorisation dans Réglages Système → Confidentialité et sécurité. Quitter
 Les mises à jour sont manuelles ; aucun flux de mise à jour intégré n’est configuré ici.
 Le ZIP est une archive alternative de la même application. Vérifier les fichiers avec `SHA256SUMS`.
 
-Les contrôles CI obligatoires couvrent architecture, version, provenance, variante Light, notices,
-intégrité, signatures dans les deux installateurs extraits et démarrage natif avec profil isolé.
-L’utilisation interactive sur le Mac de destination reste à vérifier par l’utilisateur.
-Ces builds ne mettent à jour ni la Gateway distante ni ses données. Ce n’est pas une distribution officielle Nous Research.
 '''
     return english, french
