@@ -7,7 +7,7 @@ def requires_native(base, head):
     if not SHA.fullmatch(base or '') or not SHA.fullmatch(head or ''):
         raise ValueError('Expected exact PR base and head commit SHAs')
     paths = run(['git', 'diff', '--name-only', '-z', base, head, '--']).split('\0')
-    return any(path.startswith(('scripts/', 'tests/', '.github/workflows/')) for path in paths)
+    return any(path.startswith(('scripts/', 'tests/', 'notices/', '.github/workflows/')) for path in paths)
 
 
 if __name__ == '__main__':

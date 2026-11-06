@@ -34,7 +34,7 @@ class AutomationTests(unittest.TestCase):
             self.assertFalse(requires_native('a' * 40, 'b' * 40))
 
     def test_build_inputs_require_native_validation_including_unusual_filenames(self):
-        for filename in ('scripts/license_notices.py', 'tests/test_automation.py',
+        for filename in ('scripts/license_notices.py', 'tests/test_automation.py', 'notices/reviewed-packages.json',
                          '.github/workflows/macos.yml', 'scripts/name\nwith-newline.py'):
             with self.subTest(filename=filename), patch('ci_scope.run', return_value=filename + '\0'):
                 self.assertTrue(requires_native('a' * 40, 'b' * 40))

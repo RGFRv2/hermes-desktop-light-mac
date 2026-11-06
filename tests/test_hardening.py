@@ -109,6 +109,26 @@ class HardeningTests(unittest.TestCase):
             inventory = json.loads((resources / 'licenses/npm-inventory.json').read_text())
             self.assertIn('nested', [p['name'] for p in inventory['packages']])
 
+    def test_reviewed_supplements_are_bound_to_the_locked_archive_and_version(self):
+        with tempfile.TemporaryDirectory() as root:
+            source, resources = test_public_distribution.PublicDistributionTests().make_source(Path(root))
+            policy = json.loads((Path(__file__).resolve().parents[1] / 'notices/reviewed-packages.json').read_text())
+            record = policy['packages']['@audiowave/core@0.3.1']
+            library = source / 'node_modules/@example/library'
+            (library / 'LICENSE-MIT').unlink()
+            (library / 'package.json').write_text(json.dumps({'name': '@audiowave/core', 'version': '0.3.1', 'license': 'MIT'}))
+            lock = {'packages': {'node_modules/@example/library': {'integrity': record['package_integrity']}}}
+            (source / 'package-lock.json').write_text(json.dumps(lock))
+            stage_notices(source, resources)
+            inventory = json.loads((resources / 'licenses/npm-inventory.json').read_text())
+            self.assertIn('@audiowave/core@0.3.1', inventory['publisher_declaration_only'])
+            import shutil
+            shutil.rmtree(resources / 'licenses')
+            lock['packages']['node_modules/@example/library']['integrity'] = 'sha512:changed'
+            (source / 'package-lock.json').write_text(json.dumps(lock))
+            with self.assertRaisesRegex(ValueError, 'no longer matches'):
+                stage_notices(source, resources)
+
     def test_external_dependency_symlink_is_rejected(self):
         with tempfile.TemporaryDirectory() as root:
             source, _ = test_public_distribution.PublicDistributionTests().make_source(Path(root))

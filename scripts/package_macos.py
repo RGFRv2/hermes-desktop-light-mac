@@ -63,6 +63,7 @@ def package(manifest, source, output):
         raise ValueError('Application version differs from the release tag')
     policy = Path(source).resolve() / 'apps/desktop/electron'
     stage_notices(source, resources)
+    license_inventory = read_json(resources / 'licenses/npm-inventory.json')
     sign_app(app, policy / 'entitlements.mac.plist', policy / 'entitlements.mac.inherit.plist')
     smoke_launch(app)
     dmg_path, zip_path = archive_app(app, release, manifest['tag'][1:])
@@ -90,6 +91,7 @@ def package(manifest, source, output):
         'signature_type': 'ad-hoc', 'archives_signature_verified': True,
         'native_process_smoke_test': True,
         'license_notices_included': True,
+        'license_review_publisher_declarations': license_inventory['publisher_declaration_only'],
         'stable_application_identity': identity,
         'developer_id': False, 'notarized': False,
         'interactive_install_and_launch_test': 'not performed by CI',

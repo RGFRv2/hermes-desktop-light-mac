@@ -5,8 +5,30 @@ import re
 import shutil
 import zipfile
 from pathlib import Path
+from common import digest
 
 NOTICE_NAME = re.compile(r'^(?:licen[cs]e|copying|notice|unlicense|ofl)(?:[._-].*)?$', re.I)
+
+
+def reviewed_notice(source, directory, package, declared, target):
+    policy = Path(__file__).resolve().parents[1] / 'notices'
+    records = json.loads((policy / 'reviewed-packages.json').read_text())['packages']
+    spec = package['name'] + '@' + package['version']
+    record = records.get(spec)
+    if not record:
+        return None
+    lock = json.loads((source / 'package-lock.json').read_text())['packages']
+    entry = lock.get(directory.relative_to(source).as_posix(), {})
+    notice = (policy / record['file']).resolve()
+    if (entry.get('integrity') != record['package_integrity']
+            or declared != record['declared_license'] or not notice.is_relative_to(policy)
+            or not notice.is_file() or digest(notice) != record['sha256']):
+        raise ValueError('Reviewed notice no longer matches the locked package: ' + spec)
+    relative = '@reviewed/' + record['file']
+    destination = target / 'npm' / relative
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(notice, destination)
+    return relative, record['evidence']
 
 
 def stage_notices(source, resources):
@@ -65,14 +87,24 @@ def stage_notices(source, resources):
             destination = target / 'npm' / '@upstream/LICENSE'
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(upstream, destination)
+        evidence = 'included-notice-files'
+        if not collected:
+            supplement = reviewed_notice(source, directory, package, declared, target)
+            if supplement:
+                notice, evidence = supplement
+                collected.append(notice)
         packages.append({'path': relative, 'name': package['name'], 'version': package['version'],
-                         'declared_license': declared, 'notice_files': sorted(collected)})
+                         'declared_license': declared, 'notice_files': sorted(collected),
+                         'evidence': evidence})
         notices.extend(collected)
     missing = [p['name'] + '@' + p['version'] for p in packages
                if not p['notice_files'] or p['declared_license'] in ('not declared', None, '')]
     if missing:
         raise ValueError('Runtime dependency notices require review: ' + ', '.join(sorted(missing)))
-    write = {'schema': 2,
+    limited = [p['name'] + '@' + p['version'] for p in packages if p['evidence'] == 'publisher-declaration-only']
+    if limited:
+        print('NOTICE REVIEW LIMITATION (version-bound publisher declarations): ' + ', '.join(sorted(limited)))
+    write = {'schema': 2, 'publisher_declaration_only': sorted(limited),
              'scope': 'Conservative installed production dependency closure of apps/desktop; '
                       'includes potentially bundled dependencies, not proof every module is executed',
              'packages': sorted(packages, key=lambda item: item['path']),

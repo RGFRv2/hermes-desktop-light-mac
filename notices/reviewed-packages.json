@@ -1,0 +1,190 @@
+{
+  "schema": 1,
+  "reviewed_on": "2026-11-06",
+  "packages": {
+    "@audiowave/core@0.3.1": {
+      "package_integrity": "sha512-KtC2MTWKp6Orkedty3I8IklVBVQ2IFaFWDJ1cz+UsACpX2x1gINwZGTRZT7bw/dx8KazNSMuVK5lm1jL67KQkQ==",
+      "declared_license": "MIT",
+      "file": "npm/@audiowave__core-0.3.1.txt",
+      "sha256": "39e1410bda47d7ebcb2c18de3b208d62b7704b96bd9108874cbe19710a6d9834",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    },
+    "@audiowave/react@0.6.2": {
+      "package_integrity": "sha512-hajG2Iv3mVxived9wXad8L0ZQF+HmYnB3IrfOkIdkTv4RxOJDXwFWMAd0zb7ZU1Qz0IEYZXCbASFWyuxEQ7PAw==",
+      "declared_license": "MIT",
+      "file": "npm/@audiowave__react-0.6.2.txt",
+      "sha256": "c4b3a47cf09dbeb5ada1648bb727659123159ca32a3cc1a465a6cd965f8b3f93",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    },
+    "@esbuild/darwin-arm64@0.28.2": {
+      "package_integrity": "sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==",
+      "declared_license": "MIT",
+      "file": "npm/@esbuild__darwin-arm64-0.28.2.txt",
+      "sha256": "792936a953373723270127926863b727a39576a337802d2da9b6c7821fd39502",
+      "evidence": "source-license-text",
+      "reason": "The npm archive omits the standalone license. Preserve the license text from the official source repository."
+    },
+    "@nous-research/ui@0.19.1": {
+      "package_integrity": "sha512-GIPNJQrOyFesjRZSjR/wqXdSJHzX5OW7a5ioTzI6CGeFG/l8gpajNZaY82R5n14wncQD+GyswY0rPrTxAamNcQ==",
+      "declared_license": "MIT",
+      "file": "npm/@nous-research__ui-0.19.1.txt",
+      "sha256": "5b473cd678dc36041aa7072d79f05acfd61ef0a353a71f6c8d16150f824bf09d",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    },
+    "@npmcli/agent@2.2.2": {
+      "package_integrity": "sha512-OrcNPXdpSl9UX7qPVRWbmWMCSXrcDa2M9DvrbOTj7ao1S4PlqVFYv9/yLKMkrJKZ/V5A/kDBC690or307i26Og==",
+      "declared_license": "ISC",
+      "file": "npm/@npmcli__agent-2.2.2.txt",
+      "sha256": "7d9355b92a6a94d02f9b3793ffc0ebf7df9d8add5b8f585c973498cff9987d5d",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    },
+    "@react-three/fiber@9.8.1": {
+      "package_integrity": "sha512-GbNP4r6F/gpclFKkLGHzXcuwFWAzLyKsmrQGcDuwK3wQnwLH6F1TfGtEYjHy8OQoGsajwT19B9jtVLLjjfH09w==",
+      "declared_license": "MIT",
+      "file": "npm/@react-three__fiber-9.8.1.txt",
+      "sha256": "c66252df222f5935c496f29677602f82b1432c5a0c270235fa1c27c66b558b2d",
+      "evidence": "source-license-text",
+      "reason": "The npm archive omits the standalone license. Preserve the license text from the official source repository."
+    },
+    "@rolldown/binding-darwin-arm64@1.2.13": {
+      "package_integrity": "sha512-CaJSRzlQ6Q+zkDMVA9OkVxBjVoPRCDEE3v0FSJ9kIQBgRjFApA3Si4ijhbNVUji7ZJt+PfO0e46qy4nPInHUPA==",
+      "declared_license": "MIT",
+      "file": "npm/@rolldown__binding-darwin-arm64-1.2.13.txt",
+      "sha256": "f616288df45e8a7246cbdad02398529f812396f6aaaf9360cc5dbf0784714437",
+      "evidence": "source-license-text",
+      "reason": "The npm archive omits the standalone license. Preserve the license text from the official source repository."
+    },
+    "@stitches/react@1.2.8": {
+      "package_integrity": "sha512-9g9dWI4gsSVe8bNLlb+lMkBYsnIKCZTmvqvDG+Avnn69XfmHZKiaMrx7cgTaddq7aTPPmXiTsbFcUy0xgI4+wA==",
+      "declared_license": "MIT",
+      "file": "npm/@stitches__react-1.2.8.txt",
+      "sha256": "1cc2ab33e0b3f0758f1cdc45aa5a20408f6dd848611ae33580b55a06309acfff",
+      "evidence": "source-license-text",
+      "reason": "The npm archive omits the standalone license. Preserve the license text from the official source repository."
+    },
+    "@xterm/addon-serialize@0.14.0": {
+      "package_integrity": "sha512-uteyTU1EkrQa2Ux6P/uFl2fzmXI46jy5uoQMKEOM0fKTyiW7cSn0WrFenHm5vO5uEXX/GpwW/FgILvv3r0WbkA==",
+      "declared_license": "MIT",
+      "file": "npm/@xterm__addon-serialize-0.14.0.txt",
+      "sha256": "798d4b56bae6734949b9550e9523872bc4b417dc5cddc7435f4b7ebcac77c0c3",
+      "evidence": "source-license-text",
+      "reason": "The npm archive omits the standalone license. Preserve the license text from the official source repository."
+    },
+    "agent-base@6.0.2": {
+      "package_integrity": "sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==",
+      "declared_license": "MIT",
+      "file": "npm/agent-base-6.0.2.txt",
+      "sha256": "1a15aafa4a5a18fa1276ac1a22ec93ab6a05529d986168fe7b404e4e915199a4",
+      "evidence": "published-readme-license",
+      "reason": "The complete license is present in the locked package README instead of a standalone file."
+    },
+    "eastasianwidth@0.2.0": {
+      "package_integrity": "sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==",
+      "declared_license": "MIT",
+      "file": "npm/eastasianwidth-0.2.0.txt",
+      "sha256": "221e3ef226cddafccdee6907896dc1ee08b3c0cc970fd4d97c4ee8ab49c9387b",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    },
+    "err-code@2.0.3": {
+      "package_integrity": "sha512-2bmlRpNKBxT/CRmPOlyISQpNj+qSeYvcym/uT0Jx2bMOlKLtSy1ZmLuVxSEKKyor/N5yhvp/ZiG1oE3DEYMSFA==",
+      "declared_license": "MIT",
+      "file": "npm/err-code-2.0.3.txt",
+      "sha256": "40b18b5743070707747e5f1a0c1d43febac8f07cb2c70c5cb53999dfe4024fff",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    },
+    "gsap@3.15.0": {
+      "package_integrity": "sha512-dMW4CWBTUK1AEEDeZc1g4xpPGIrSf9fJF960qbTZmN/QwZIWY5wgliS6JWl9/25fpTGJrMRtSjGtOmPnfjZB+A==",
+      "declared_license": "Standard 'no charge' license: https://gsap.com/standard-license.",
+      "file": "npm/gsap-3.15.0.txt",
+      "sha256": "b294b0a4fa66c63c543ef79923c9d3d09b3ddb7d2a4e69ca4ca2c83ac4697b5c",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    },
+    "https-proxy-agent@5.0.1": {
+      "package_integrity": "sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==",
+      "declared_license": "MIT",
+      "file": "npm/https-proxy-agent-5.0.1.txt",
+      "sha256": "3cc06c26bea2c420c6a8ba11abde797f4992924ecd2d6d0c5ead97810e611474",
+      "evidence": "published-readme-license",
+      "reason": "The complete license is present in the locked package README instead of a standalone file."
+    },
+    "imurmurhash@0.1.4": {
+      "package_integrity": "sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==",
+      "declared_license": "MIT",
+      "file": "npm/imurmurhash-0.1.4.txt",
+      "sha256": "e54ee1d1ae1f823d05041269718f1046b44721e77eb120c33c83e92ef61bf463",
+      "evidence": "source-license-text",
+      "reason": "The npm archive omits the standalone license. Preserve the license text from the official source repository."
+    },
+    "lazy-val@1.0.5": {
+      "package_integrity": "sha512-0/BnGCCfyUMkBpeDgWihanIAF9JmZhHBgUhEqzvf+adhNGLoP6TaiI5oF8oyb3I45P+PcnrqihSf01M0l0G5+Q==",
+      "declared_license": "MIT",
+      "file": "npm/lazy-val-1.0.5.txt",
+      "sha256": "6d447ad22b1c84278b67eaf6735295aa08ee65558fe283862f0110f5b4e09c7a",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    },
+    "react-arborist@3.16.0": {
+      "package_integrity": "sha512-Pp1TQXETKMeg/0yAMGBFIwze7IfZaghDScX4vekJ4Ge8/t7uYifbDBhEGUSOYaDuahE1f8fyBIrlN2pLD4ysTA==",
+      "declared_license": "MIT",
+      "file": "npm/react-arborist-3.16.0.txt",
+      "sha256": "6bf028d64b9d5b7f645dd7bb5043db46358977b796748d52b7885d04df15d866",
+      "evidence": "source-license-text",
+      "reason": "The npm archive omits the standalone license. Preserve the license text from the official source repository."
+    },
+    "react-remove-scroll-bar@2.3.8": {
+      "package_integrity": "sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==",
+      "declared_license": "MIT",
+      "file": "npm/react-remove-scroll-bar-2.3.8.txt",
+      "sha256": "b289e6b70bd139c55b236d16da75aeff46d4b231aee446432e8a237dacf104a3",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    },
+    "rehype-katex@7.0.1": {
+      "package_integrity": "sha512-OiM2wrZ/wuhKkigASodFoo8wimG3H12LWQaH8qSPVJn9apWKFSH3YOCtbKpBorTVw/eI7cuT21XBbvwEswbIOA==",
+      "declared_license": "MIT",
+      "file": "npm/rehype-katex-7.0.1.txt",
+      "sha256": "85e0c12b113dfeee3b519b4957b3280aaef5124ac997e9d25e27120705210ee8",
+      "evidence": "source-license-text",
+      "reason": "The npm archive omits the standalone license. Preserve the license text from the official source repository."
+    },
+    "remark-math@6.0.0": {
+      "package_integrity": "sha512-MMqgnP74Igy+S3WwnhQ7kqGlEerTETXMvJhrUzDikVZ2/uogJCb+WHUg97hK9/jcfc0dkD73s3LN8zU49cTEtA==",
+      "declared_license": "MIT",
+      "file": "npm/remark-math-6.0.0.txt",
+      "sha256": "80628041bcb7332c2f76c89a341f97e543e2bb133572b1902fde1110b1147998",
+      "evidence": "source-license-text",
+      "reason": "The npm archive omits the standalone license. Preserve the license text from the official source repository."
+    },
+    "tr46@0.0.3": {
+      "package_integrity": "sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==",
+      "declared_license": "MIT",
+      "file": "npm/tr46-0.0.3.txt",
+      "sha256": "297814d1474cd61a652d7e06a236eb147e76363e837ab35f428659431aff8e67",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    },
+    "unicode-animations@1.0.3": {
+      "package_integrity": "sha512-+klB2oWwcYZjYWhwP4Pr8UZffWDFVx6jKeIahE6z0QYyM2dwDeDPyn5nevCYbyotxvtT9lh21cVURO1RX0+YMg==",
+      "declared_license": "MIT",
+      "file": "npm/unicode-animations-1.0.3.txt",
+      "sha256": "4115a09cb4b9c6e9fa7f35e023214b0644a433733a42362510e424c9087701af",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    },
+    "use-composed-ref@1.4.0": {
+      "package_integrity": "sha512-djviaxuOOh7wkj0paeO1Q/4wMZ8Zrnag5H6yBvzN7AKKe8beOaED9SF5/ByLqsku8NP4zQqsvM2u3ew/tJK8/w==",
+      "declared_license": "MIT",
+      "file": "npm/use-composed-ref-1.4.0.txt",
+      "sha256": "80775729450ef64d03ecbe310e2708a9d05a05b07226cb5153cde203a59010de",
+      "evidence": "publisher-declaration-only",
+      "reason": "The locked archive and available official source did not provide a standalone complete license text. Preserve the exact publisher declaration and README as attribution evidence. This exception does not certify complete license compliance; review remains limited."
+    }
+  }
+}
