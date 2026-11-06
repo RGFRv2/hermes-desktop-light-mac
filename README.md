@@ -46,10 +46,10 @@ Only approve a build you trust. This project does not require disabling Gatekeep
 ## How builds work
 
 - Checks for the latest official stable Hermes release run daily at **10:00 and 23:00, Europe/Paris time**, including daylight saving time changes. GitHub may delay scheduled runs.
-- **Run workflow** accepts an optional upstream tag, such as `v0.23.0`.
+- **Run workflow** on **main** accepts an optional upstream tag, such as `v0.23.0`.
 - Native compilation is skipped when a complete release for the current packaging revision exists.
 - The workflow verifies the exact upstream tag, commit and build-claim object where required, then builds the `light` variant from an unmodified checkout.
-- Required notices are staged before nested code and bundles are signed inside-out. DMG and ZIP are created from the signed app.
+- Production dependency notice coverage and stable application identity are checked. Required notices are staged before nested code and bundles are signed inside-out. DMG and ZIP are created from the signed app.
 - Publication requires integrity, ARM64 architecture, provenance, Light metadata, valid signatures inside both archives, required notices and native process startup with an isolated profile.
 - PRs run automation tests without publishing; native validation runs when scripts, tests or workflows change. Interrupted publication leaves a retryable draft.
 

@@ -5,6 +5,7 @@ import re
 import subprocess
 from pathlib import Path
 from common import api, digest, distribution_tag, distribution_version, find_release, read_json, summary, validate_manifest
+from app_identity import BUNDLE_ID, PACKAGE_NAME, PROFILE_NAME
 
 
 def verify_downloads(directory):
@@ -34,13 +35,44 @@ def verify_downloads(directory):
             or validation.get('archives_signature_verified') is not True
             or validation.get('native_process_smoke_test') is not True
             or validation.get('license_notices_included') is not True
+            or validation.get('stable_application_identity') != {
+                'bundle_id': BUNDLE_ID, 'package_name': PACKAGE_NAME, 'profile_name': PROFILE_NAME}
             or not all(validation.get(key) is True for key in
                        ('light_stamp_and_no_agent_payload', 'dmg_integrity', 'zip_integrity'))):
         raise ValueError('Package validation did not pass')
     return manifest
 
 
+def require_publication_context(env=None):
+    env = os.environ if env is None else env
+    if (env.get('GITHUB_REF') != 'refs/heads/main'
+            or env.get('GITHUB_EVENT_NAME') not in {'push', 'schedule', 'workflow_dispatch'}):
+        raise ValueError('Publication requires an approved event on refs/heads/main')
+
+
+def verify_draft(release, tag, release_id=None):
+    if (not release or release.get('draft') is not True
+            or release.get('tag_name') != tag or release.get('immutable') is True
+            or not isinstance(release.get('id'), int)
+            or (release_id is not None and release['id'] != release_id)):
+        raise ValueError('Release identity changed or release is no longer a mutable draft')
+    return release['id']
+
+
+def verify_uploaded_assets(release, directory):
+    files = {path.name: path for path in Path(directory).iterdir()}
+    assets = release.get('assets', [])
+    if len(assets) != len(files) or {a.get('name') for a in assets} != set(files):
+        raise ValueError('Uploaded release assets are missing or unexpected')
+    for asset in assets:
+        path = files[asset['name']]
+        if (asset.get('state') != 'uploaded' or asset.get('size') != path.stat().st_size
+                or asset.get('digest') != 'sha256:' + digest(path)):
+            raise ValueError(f'Uploaded asset integrity failed: {path.name}')
+
+
 def publish(directory):
+    require_publication_context()
     directory = Path(directory).resolve()
     manifest = verify_downloads(directory)
     repository = os.environ['GITHUB_REPOSITORY']
@@ -50,6 +82,8 @@ def publish(directory):
     existing = find_release(repository, tag)
     if existing and not existing['draft']:
         raise ValueError('Release is already published; refusing to replace its bytes')
+    if existing:
+        verify_draft(existing, tag)
     files = [str(path) for path in sorted(directory.iterdir())]
     command = ['gh', 'release']
     common = ['--repo', repository]
@@ -57,16 +91,18 @@ def publish(directory):
         subprocess.run([*command, 'create', tag, *common, '--target', os.environ['GITHUB_SHA'],
                         '--draft', '--title', f'Hermes Light {tag} — Mac ARM64',
                         '--notes-file', str(directory / 'RELEASE_NOTES.md')], check=True)
-    # Only a draft is mutable. A retry may replace partial uploads in that draft.
+    # Read back the exact draft before any retry can replace partial uploads.
+    current = find_release(repository, tag)
+    release_id = verify_draft(current, tag, existing['id'] if existing else None)
     subprocess.run([*command, 'upload', tag, *common, '--clobber', *files], check=True)
     current = find_release(repository, tag)
-    if not current:
-        raise ValueError('Draft release could not be read back after upload')
-    assets = {asset['name']: asset['size'] for asset in current['assets']}
-    if assets != {Path(path).name: Path(path).stat().st_size for path in files}:
-        raise ValueError('Uploaded release assets are missing or unexpected; leaving the release as a draft')
+    verify_draft(current, tag, release_id)
+    verify_uploaded_assets(current, directory)
     latest = api(f'/repos/{repository}/releases/latest', missing_ok=True)
     promote = latest is None or distribution_version(tag) >= distribution_version(latest['tag_name'])
+    current = find_release(repository, tag)
+    verify_draft(current, tag, release_id)
+    verify_uploaded_assets(current, directory)
     subprocess.run([*command, 'edit', tag, *common, '--draft=false',
                     '--latest=' + str(promote).lower(), '--target', os.environ['GITHUB_SHA'],
                     '--notes-file', str(directory / 'RELEASE_NOTES.md')],

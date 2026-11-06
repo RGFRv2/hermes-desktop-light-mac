@@ -10,7 +10,7 @@ La licence MIT à la racine couvre l’automatisation et la documentation de ce 
 
 ## Electron, Chromium et dépendances npm
 
-Les nouveaux paquets conservent la licence Electron et les notices Chromium issues de l’archive Electron verrouillée. Ils incluent les textes de licence et de notice disponibles, avec un inventaire des dépendances npm installées, y compris celles de compilation. Cet inventaire large ne signifie pas que tous les paquets listés sont embarqués à l’exécution, ni que la collecte automatique règle toutes les obligations de licence possibles.
+Les paquets conservent la licence Electron et les notices Chromium de l’archive verrouillée. L’inventaire couvre les dépendances de production et les dépendances paires installées de l’espace desktop, y compris les paquets imbriqués et les liens internes au checkout. Il constitue une liste prudente des composants potentiellement embarqués, sans affirmer que chaque module est exécuté. Chaque paquet doit avoir des notices associées non vides et une licence déclarée ; sinon le build demande une revue. Les espaces de travail internes utilisent la licence upstream. Les dépendances réservées à la compilation sont exclues. La collecte automatique ne règle pas toutes les obligations propres aux illustrations, polices et autres ressources.
 
 Les notices sont placées dans `Hermes Light.app/Contents/Resources/licenses/` et vérifiées avant signature et publication. Les éventuelles conditions propres aux polices, illustrations, bibliothèques natives et autres ressources upstream continuent de s’appliquer.
 

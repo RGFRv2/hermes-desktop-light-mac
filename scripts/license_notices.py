@@ -34,42 +34,84 @@ def stage_notices(source, resources):
             name = expected if expected in candidates else sorted(candidates)[0]
             (target / 'electron' / destination).write_bytes(archive.read(name))
 
-    modules = source / 'node_modules'
-    if not modules.is_dir():
-        raise ValueError('Installed npm dependencies are missing')
-    inventory, notices = [], []
-    for root, directories, files in os.walk(modules, followlinks=False):
-        directories[:] = sorted(name for name in directories if not name.startswith('.')
-                                and not (Path(root) / name).is_symlink())
-        directory = Path(root)
-        package_root = (directory.parent.name == 'node_modules'
-                        or (directory.parent.name.startswith('@')
-                            and directory.parent.parent.name == 'node_modules'))
-        if package_root and 'package.json' in files and not (directory / 'package.json').is_symlink():
-            package = json.loads((directory / 'package.json').read_text())
-            if isinstance(package.get('name'), str) and isinstance(package.get('version'), str):
-                declared = package.get('license', 'not declared')
-                if isinstance(declared, dict):
-                    declared = declared.get('type', 'not declared')
-                inventory.append({'path': directory.relative_to(modules).as_posix(),
-                                  'name': package['name'], 'version': package['version'],
-                                  'declared_license': declared})
-        for name in sorted(files):
-            original = directory / name
-            if not NOTICE_NAME.fullmatch(name) or original.is_symlink():
-                continue
-            relative = original.relative_to(modules)
-            destination = target / 'npm' / relative
+    packages, notices = [], []
+    for directory in runtime_packages(source):
+        package = json.loads((directory / 'package.json').read_text())
+        relative = directory.relative_to(source).as_posix()
+        declared = package.get('license', 'not declared')
+        if isinstance(declared, dict):
+            declared = declared.get('type', 'not declared')
+        collected = []
+        for root, directories, files in os.walk(directory, followlinks=False):
+            directories[:] = sorted(n for n in directories if not n.startswith('.')
+                                    and n != 'node_modules' and not (Path(root) / n).is_symlink())
+            for name in sorted(files):
+                original = Path(root) / name
+                if not NOTICE_NAME.fullmatch(name) or original.is_symlink() or not original.stat().st_size:
+                    continue
+                notice = original.relative_to(source).as_posix()
+                destination = target / 'npm' / notice
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(original, destination)
+                collected.append(notice)
+        # First-party workspace packages are covered by the repository license.
+        if not collected and 'node_modules' not in directory.relative_to(source).parts:
+            declared = 'Upstream repository LICENSE'
+            collected = ['@upstream/LICENSE']
+            destination = target / 'npm' / collected[0]
             destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(original, destination)
-            notices.append(relative.as_posix())
-    if not inventory or not notices:
-        raise ValueError('No npm license inventory or notice texts could be collected')
-    write = {'scope': 'Regular installed npm package directories, including build dependencies; '
-                      'symlinks are not followed; not a runtime-only SBOM',
-             'packages': sorted(inventory, key=lambda item: item['path']), 'notice_files': sorted(notices)}
+            shutil.copyfile(upstream, destination)
+        packages.append({'path': relative, 'name': package['name'], 'version': package['version'],
+                         'declared_license': declared, 'notice_files': sorted(collected)})
+        notices.extend(collected)
+    missing = [p['name'] + '@' + p['version'] for p in packages
+               if not p['notice_files'] or p['declared_license'] in ('not declared', None, '')]
+    if missing:
+        raise ValueError('Runtime dependency notices require review: ' + ', '.join(sorted(missing)))
+    write = {'schema': 2,
+             'scope': 'Conservative installed production dependency closure of apps/desktop; '
+                      'includes potentially bundled dependencies, not proof every module is executed',
+             'packages': sorted(packages, key=lambda item: item['path']),
+             'notice_files': sorted(set(notices))}
     (target / 'npm-inventory.json').write_text(json.dumps(write, indent=2, ensure_ascii=False) + '\n')
     verify_notices(resources)
+
+
+def runtime_packages(source):
+    """Resolve Node package ancestry, workspace links and optional platform inputs."""
+    source = Path(source).resolve()
+    pending = [source / 'apps/desktop']
+    seen = set()
+    while pending:
+        directory = pending.pop().resolve()
+        if not directory.is_relative_to(source):
+            raise ValueError('Dependency symlink escapes the source tree')
+        if directory in seen:
+            continue
+        seen.add(directory)
+        package = json.loads((directory / 'package.json').read_text())
+        if not isinstance(package.get('name'), str) or not isinstance(package.get('version'), str):
+            raise ValueError('Invalid runtime package metadata')
+        yield directory
+        optional = package.get('optionalDependencies', {})
+        dependencies = {**package.get('peerDependencies', {}), **package.get('dependencies', {}), **optional}
+        for name in sorted(dependencies):
+            if not re.fullmatch(r'(?:@[a-zA-Z0-9._-]+/)?[a-zA-Z0-9._-]+', name) or name in ('.', '..'):
+                raise ValueError('Unsafe dependency name')
+            parent, found = directory, None
+            while parent.is_relative_to(source):
+                candidate = parent / 'node_modules' / name
+                if (candidate / 'package.json').is_file():
+                    found = candidate
+                    break
+                if parent == source:
+                    break
+                parent = parent.parent
+            if found is None:
+                if name in optional or package.get('peerDependenciesMeta', {}).get(name, {}).get('optional') is True:
+                    continue
+                raise ValueError(f'Missing installed runtime dependency: {name}')
+            pending.append(found)
 
 
 def verify_notices(resources):
@@ -80,9 +122,12 @@ def verify_notices(resources):
         if not path.is_file() or path.is_symlink() or path.stat().st_size == 0:
             raise ValueError(f'Missing redistribution notice: {relative}')
     data = json.loads((root / 'npm-inventory.json').read_text())
-    if not data.get('packages') or not data.get('notice_files'):
+    if data.get('schema') != 2 or not data.get('packages') or not data.get('notice_files'):
         raise ValueError('Empty npm license inventory')
+    for package in data['packages']:
+        if not package.get('notice_files') or not set(package['notice_files']) <= set(data['notice_files']):
+            raise ValueError('Runtime package is missing its notice coverage')
     for relative in data['notice_files']:
         path = root / 'npm' / relative
-        if not path.resolve().is_relative_to((root / 'npm').resolve()) or not path.is_file():
+        if not path.resolve().is_relative_to((root / 'npm').resolve()) or not path.is_file() or path.is_symlink() or path.stat().st_size == 0:
             raise ValueError('Invalid npm notice path')

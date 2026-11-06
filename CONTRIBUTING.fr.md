@@ -4,10 +4,12 @@
 
 Ce dépôt maintient les builds Light macOS non officiels. Signaler à [Hermes upstream](https://github.com/NousResearch/hermes-agent) les problèmes de l’application ou de la Gateway qui se reproduisent indépendamment de ce packaging.
 
+Utiliser Python 3.12 pour reproduire la CI ; Python 3.12 ou ultérieur est requis. Le Python système Apple peut être plus ancien.
+
 1. Ouvrir ou référencer une issue décrivant le problème et le comportement attendu.
 2. Utiliser une branche dédiée et créer une PR liée à l’issue.
 3. Mettre à jour les deux langues du README si le comportement utilisateur change.
-4. Exécuter `python3 -m unittest discover -s tests -v`.
+4. Exécuter `python3.12 -m unittest discover -s tests -v`.
 5. Attendre les contrôles CI pertinents avant fusion. Le packaging nécessite une validation native macOS.
 
 L’anglais est la langue par défaut de la documentation. Les contributions et signalements en français sont bienvenus.

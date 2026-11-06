@@ -4,6 +4,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
@@ -12,7 +13,15 @@ UPSTREAM = 'NousResearch/hermes-agent'
 API = 'https://api.github.com'
 TAG = re.compile(r'v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)\Z')
 SHA = re.compile(r'[a-f0-9]{40}\Z')
-PACKAGING_REVISION = 2
+PACKAGING_REVISION = 3
+
+
+def require_python(version=None):
+    if (version or sys.version_info) < (3, 12):
+        raise RuntimeError('Python 3.12 or newer is required; use python3.12 to match CI')
+
+
+require_python()
 
 
 def stable_version(tag):

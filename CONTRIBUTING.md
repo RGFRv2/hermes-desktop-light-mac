@@ -4,10 +4,12 @@ English · [Français](CONTRIBUTING.fr.md)
 
 This repository maintains unofficial macOS Light build automation. Report application or Gateway bugs to [upstream Hermes](https://github.com/NousResearch/hermes-agent) if they reproduce independently of this packaging.
 
+Use Python 3.12 to match CI; Python 3.12 or newer is required. Apple’s system Python may be older.
+
 1. Open or reference an issue describing the problem and expected behavior.
 2. Use a dedicated branch and open a PR linked to the issue.
 3. Update both README languages when user-facing behavior changes.
-4. Run `python3 -m unittest discover -s tests -v`.
+4. Run `python3.12 -m unittest discover -s tests -v`.
 5. Wait for relevant CI checks before merging. Packaging changes require native macOS validation.
 
 English is the default documentation language. French reports and contributions are welcome.
