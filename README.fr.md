@@ -51,11 +51,9 @@ N’autoriser qu’un build auquel vous faites confiance. Ce projet ne demande p
 - Vérification du tag, du commit et, lorsque nécessaire, de la référence officielle de tentative de build, puis compilation de `light` depuis les sources inchangées.
 - Ajout des notices avant signature du code et des bundles de l’intérieur vers l’extérieur. DMG et ZIP sont créés depuis l’application signée.
 - Publication conditionnée à l’intégrité, l’architecture ARM64, la provenance, les métadonnées Light, les signatures dans les deux archives, les notices requises et un démarrage natif avec profil isolé.
-- Les PR valident sans publier. Une publication interrompue laisse un brouillon relançable.
+- Les PR exécutent les tests d’automatisation sans publier ; la validation native est lancée si les scripts, tests ou workflows changent. Une publication interrompue laisse un brouillon relançable.
 
 Les tags comme **`vX.Y.Z-macos.N`** indiquent la version de Hermes **X.Y.Z** et la révision du paquet Mac **N**.
-
-Dans un dépôt public, GitHub peut désactiver les tâches planifiées après 60 jours sans activité. Vérifier le workflow si les contrôles quotidiens s’arrêtent. [Documentation GitHub](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
 
 Les actions GitHub utilisent Node 24 et sont épinglées par SHA. Le Node du constructeur reste contrôlé séparément par Hermes. Python et les autres outils sont des dépendances de compilation, pas un runtime embarqué dans Light.
 

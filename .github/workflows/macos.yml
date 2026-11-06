@@ -2,10 +2,6 @@ name: Build Hermes Light for Mac
 
 on:
   pull_request:
-    paths:
-      - '.github/workflows/macos.yml'
-      - 'scripts/**'
-      - 'tests/**'
   workflow_dispatch:
     inputs:
       tag:
@@ -46,13 +42,21 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 (Node 24)
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0 (Node 24)
         with:
           python-version: '3.12'
       - name: Test release selection and package validation
         run: python -m unittest discover -s tests -v
+      - name: Select native validation scope
+        id: scope
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: python scripts/ci_scope.py
       - name: Select an unpublished stable release
         id: release
+        if: github.event_name != 'pull_request' || steps.scope.outputs.native == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           REQUESTED_TAG: ${{ inputs.tag }}

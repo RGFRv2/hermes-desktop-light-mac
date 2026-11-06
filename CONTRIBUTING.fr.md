@@ -15,3 +15,7 @@ L’anglais est la langue par défaut de la documentation. Les contributions et 
 Conserver les révisions upstream intactes et documenter séparément le traitement des artefacts. Incrémenter `PACKAGING_REVISION` si un installateur change ; ne jamais remplacer les binaires publiés. Une modification de documentation seule ne nécessite pas de reconstruire un installateur.
 
 Ne pas publier de clés API, certificats, identifiants Gateway, adresses privées ou journaux personnels non anonymisés. Voir [SECURITY.fr.md](SECURITY.fr.md) et [AGENTS.md](AGENTS.md).
+
+## Maintenance du planning
+
+Dans un dépôt public, GitHub peut désactiver les workflows planifiés après 60 jours sans activité du dépôt. Si les vérifications automatiques s’arrêtent, vérifier que le workflow est toujours activé. [Documentation GitHub](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)

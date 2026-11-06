@@ -14,6 +14,7 @@ from resolve import resolve
 from repack_macos import verify_signature
 from sign_macos import signing_plan
 from build_macos import build
+from ci_scope import requires_native
 
 
 def manifest():
@@ -28,6 +29,21 @@ def stamp():
 
 
 class AutomationTests(unittest.TestCase):
+    def test_documentation_only_pr_skips_native_validation(self):
+        with patch('ci_scope.run', return_value='README.md\0README.fr.md\0LICENSE\0'):
+            self.assertFalse(requires_native('a' * 40, 'b' * 40))
+
+    def test_build_inputs_require_native_validation_including_unusual_filenames(self):
+        for filename in ('scripts/license_notices.py', 'tests/test_automation.py',
+                         '.github/workflows/macos.yml', 'scripts/name\nwith-newline.py'):
+            with self.subTest(filename=filename), patch('ci_scope.run', return_value=filename + '\0'):
+                self.assertTrue(requires_native('a' * 40, 'b' * 40))
+
+    def test_invalid_pr_revisions_fail_before_invoking_git(self):
+        with patch('ci_scope.run') as capture, self.assertRaises(ValueError):
+            requires_native('--help', 'b' * 40)
+        capture.assert_not_called()
+
     def test_native_build_defers_archives_and_excludes_credentials(self):
         with tempfile.TemporaryDirectory() as root, \
                 patch('build_macos.sys.platform', 'darwin'), \
