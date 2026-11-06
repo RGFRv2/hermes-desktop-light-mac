@@ -21,3 +21,9 @@ Ne pas publier de clés API, certificats, identifiants Gateway, adresses privée
 ## Maintenance du planning
 
 Dans un dépôt public, GitHub peut désactiver les workflows planifiés après 60 jours sans activité du dépôt. Si les vérifications automatiques s’arrêtent, vérifier que le workflow est toujours activé. [Documentation GitHub](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
+
+## Administration des releases
+
+Publier uniquement depuis `main`, y compris pour un lancement manuel. Les SHA-256 des fichiers reçus par GitHub doivent correspondre avant publication. Activer l’immutabilité dans les réglages et conserver le cycle brouillon/ajout des fichiers/publication. Utiliser une nouvelle révision de packaging si les octets des installeurs changent.
+
+À l’ouverture publique, vérifier l’application effective de la protection de main, activer le signalement privé des failles, vérifier la recherche de secrets et la protection des push, puis revoir l’approbation des workflows de contributeurs externes. Ces options dépendent de la visibilité et du forfait ; un fichier de politique ne les active pas.

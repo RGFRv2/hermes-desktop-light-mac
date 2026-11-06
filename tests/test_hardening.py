@@ -83,6 +83,17 @@ class HardeningTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'require review'):
                 stage_notices(source, resources)
 
+    def test_notices_do_not_walk_the_application_output_inside_the_workspace(self):
+        with tempfile.TemporaryDirectory() as root:
+            source, resources = test_public_distribution.PublicDistributionTests().make_source(Path(root))
+            output = source / 'apps/desktop/release/mac-arm64/Hermes Light.app/Contents/Resources'
+            output.parent.mkdir(parents=True)
+            resources.rename(output)
+            stage_notices(source, output)
+            inventory = json.loads((output / 'licenses/npm-inventory.json').read_text())
+            self.assertFalse(any('/release/' in p for p in inventory['notice_files']))
+            verify_notices(output)
+
     def test_nested_runtime_dependencies_are_collected(self):
         with tempfile.TemporaryDirectory() as root:
             source, resources = test_public_distribution.PublicDistributionTests().make_source(Path(root))

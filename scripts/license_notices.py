@@ -44,7 +44,10 @@ def stage_notices(source, resources):
         collected = []
         for root, directories, files in os.walk(directory, followlinks=False):
             directories[:] = sorted(n for n in directories if not n.startswith('.')
-                                    and n != 'node_modules' and not (Path(root) / n).is_symlink())
+                                    and n != 'node_modules' and not (Path(root) / n).is_symlink()
+                                    and not (Path(root) / n).resolve().is_relative_to(target)
+                                    and not (Path(root) == source / 'apps/desktop'
+                                             and n in {'release', 'dist', 'build'}))
             for name in sorted(files):
                 original = Path(root) / name
                 if not NOTICE_NAME.fullmatch(name) or original.is_symlink() or not original.stat().st_size:
@@ -55,10 +58,11 @@ def stage_notices(source, resources):
                 shutil.copyfile(original, destination)
                 collected.append(notice)
         # First-party workspace packages are covered by the repository license.
-        if not collected and 'node_modules' not in directory.relative_to(source).parts:
-            declared = 'Upstream repository LICENSE'
-            collected = ['@upstream/LICENSE']
-            destination = target / 'npm' / collected[0]
+        if 'node_modules' not in directory.relative_to(source).parts:
+            if declared in ('not declared', None, ''):
+                declared = 'Upstream repository LICENSE'
+            collected.append('@upstream/LICENSE')
+            destination = target / 'npm' / '@upstream/LICENSE'
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(upstream, destination)
         packages.append({'path': relative, 'name': package['name'], 'version': package['version'],

@@ -21,3 +21,9 @@ Do not include API keys, certificates, Gateway credentials, private addresses or
 ## Schedule maintenance
 
 In public repositories, GitHub may disable scheduled workflows after 60 days without repository activity. If automatic release checks stop, verify that the workflow is still enabled. [GitHub schedule documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
+
+## Release administration
+
+Publish only from `main`, including manual runs. Uploaded assets must have matching GitHub SHA-256 digests before publication. Enable release immutability in repository settings and keep the draft/upload/publish sequence. Use a new packaging revision when installer bytes change.
+
+When opening the repository to the public, verify that the saved main protection is enforced, enable private vulnerability reporting, verify secret scanning and push protection, and review approval requirements for workflows from external contributors. These settings depend on repository visibility and account capabilities; a policy file does not enable them.
