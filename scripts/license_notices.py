@@ -10,6 +10,58 @@ from common import digest
 NOTICE_NAME = re.compile(r'^(?:licen[cs]e|copying|notice|unlicense|ofl)(?:[._-].*)?$', re.I)
 
 
+def pnpm_integrity(text, spec):
+    """Read one registry integrity from pnpm's canonical v9 packages section.
+
+    This is deliberately not a general YAML reader. Refuse unsupported evidence
+    rather than guessing, and never read peer snapshots or importer versions as
+    archive identities. No additional build dependency is needed.
+    """
+    lines = text.splitlines()
+    if (any(re.match(r'^(?:---|\.\.\.)(?:\s|$)', line) for line in lines)
+            or [line for line in lines if line.startswith('lockfileVersion:')]
+            != ["lockfileVersion: '9.0'"] or lines.count('packages:') != 1):
+        raise ValueError('Unsupported pnpm lockfile: expected one canonical v9 document')
+    active, seen, integrity = False, False, None
+    for line in lines[lines.index('packages:') + 1:]:
+        if not line.strip():
+            continue
+        if not line.startswith(' '):
+            break
+        header = re.fullmatch(r'  (\S.*):', line)
+        if header:
+            key = header[1]
+            if key.startswith("'") and key.endswith("'"):
+                key = key[1:-1].replace("''", "'")
+            elif key.startswith('"'):
+                key = json.loads(key)
+            active = key == spec
+            if active:
+                if seen:
+                    raise ValueError('Duplicate pnpm package identity: ' + spec)
+                seen = True
+        elif active and line.startswith('    resolution:'):
+            match = re.fullmatch(r'    resolution: \{integrity: (sha(?:256|384|512)-[A-Za-z0-9+/]+={0,2})\}', line)
+            if not match or integrity is not None:
+                raise ValueError('Unsupported pnpm package resolution: ' + spec)
+            integrity = match[1]
+    return integrity
+
+
+def locked_integrity(source, directory, package):
+    npm, pnpm = source / 'package-lock.json', source / 'pnpm-lock.yaml'
+    if npm.is_file() and pnpm.is_file():
+        raise ValueError('Ambiguous upstream dependency lockfiles')
+    if pnpm.is_file():
+        # pnpm realpaths contain virtual-store and peer suffixes. Registry
+        # archives are keyed by their actual package name and version instead.
+        return pnpm_integrity(pnpm.read_text(), package['name'] + '@' + package['version'])
+    if npm.is_file():
+        lock = json.loads(npm.read_text())['packages']
+        return lock.get(directory.relative_to(source).as_posix(), {}).get('integrity')
+    raise ValueError('Upstream dependency lockfile is missing (npm or pnpm required)')
+
+
 def reviewed_notice(source, directory, package, declared, target):
     policy = Path(__file__).resolve().parents[1] / 'notices'
     records = json.loads((policy / 'reviewed-packages.json').read_text())['packages']
@@ -17,10 +69,8 @@ def reviewed_notice(source, directory, package, declared, target):
     record = records.get(spec)
     if not record:
         return None
-    lock = json.loads((source / 'package-lock.json').read_text())['packages']
-    entry = lock.get(directory.relative_to(source).as_posix(), {})
     notice = (policy / record['file']).resolve()
-    if (entry.get('integrity') != record['package_integrity']
+    if (locked_integrity(source, directory, package) != record['package_integrity']
             or declared != record['declared_license'] or not notice.is_relative_to(policy)
             or not notice.is_file() or digest(notice) != record['sha256']):
         raise ValueError('Reviewed notice no longer matches the locked package: ' + spec)
